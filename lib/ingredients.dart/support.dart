@@ -12,4 +12,11 @@ class Appwidget {
       fontSize: 18,
     );
   }
+
+  static TextStyle imageNAMEcolor() {
+    return TextStyle(
+      color: Colors.white,
+      fontSize: 20,
+    );
+  }
 }

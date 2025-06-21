@@ -11,18 +11,18 @@ List<categoryModel> getCategories() {
   categorymodel = new categoryModel();
 
   categorymodel.name = 'burger';
-  categorymodel.photo = 'assets/images/burger.png';
+  categorymodel.photo = 'assets/images/pizza1.png';
   category.add(categorymodel);
   categorymodel = new categoryModel();
 
   categorymodel.name = 'chinese';
-  categorymodel.photo = 'assets/images/chinese.png';
+  categorymodel.photo = 'assets/images/pizza2.png';
   category.add(categorymodel);
 
   categorymodel = new categoryModel();
 
   categorymodel.name = 'mexican';
-  categorymodel.photo = 'assets/images/tactos.png';
+  categorymodel.photo = 'assets/images/pizza3.png';
   category.add(categorymodel);
   categorymodel = new categoryModel();
 
