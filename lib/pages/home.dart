@@ -1,7 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:thefixed/ingredients.dart/support.dart';
+import 'package:thefixed/medel/burger_model.dart';
 import 'package:thefixed/medel/category_model.dart';
+import 'package:thefixed/medel/chinese_model.dart';
+import 'package:thefixed/medel/mexican_model.dart';
+import 'package:thefixed/medel/pizza_model.dart';
+import 'package:thefixed/pages/service/burger_data.dart';
 import 'package:thefixed/pages/service/category_data.dart';
+import 'package:thefixed/pages/service/chinese_data.dart';
+import 'package:thefixed/pages/service/mexican_data.dart';
+import 'package:thefixed/pages/service/pizza_data.dart';
 
 class Home extends StatefulWidget {
   const Home({super.key});
@@ -12,15 +20,41 @@ class Home extends StatefulWidget {
 
 class _HomeState extends State<Home> {
   List<categoryModel> categories = [];
+  List<Pizzamodel> pizza = [];
+  List<MexicanModel> mexican = [];
+  List<BurgerModel> burger = [];
+  List<ChineseModel> chinese = [];
+  List<dynamic> getSelectedItems() {
+    switch (selectedindex) {
+      case 0:
+        return pizza;
+      case 1:
+        return burger;
+      case 2:
+        return chinese;
+      case 3:
+        return mexican;
+      default:
+        return pizza;
+    }
+  }
+
   @override
   void initState() {
     super.initState();
-    categories = getCategories(); // Assuming this is imported
+    categories = getCategories();
+    pizza = getPizza();
+    burger = getBurger();
+    chinese = getChinese();
+    mexican = getMexican();
+    // Assuming this is imported
   }
 
   int selectedindex = 0;
 
   Widget build(BuildContext context) {
+    List<dynamic> items = getSelectedItems();
+
     return Scaffold(
       body: Container(
         margin: EdgeInsets.only(left: 10, right: 10, top: 30),
@@ -105,6 +139,23 @@ class _HomeState extends State<Home> {
                       },
                     );
                   }),
+            ),
+            SizedBox(
+              height: 20,
+            ),
+            Expanded(
+              child: GridView.builder(
+                  padding: EdgeInsets.zero,
+                  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      childAspectRatio: 0.7,
+                      crossAxisSpacing: 10,
+                      mainAxisSpacing: 10),
+                  itemCount: items.length,
+                  itemBuilder: (context, index) {
+                    return foodTile(items[index].name!, items[index].photo!,
+                        items[index].price!);
+                  }),
             )
           ],
         ),
@@ -161,4 +212,50 @@ class _CategorytileState extends State<Categorytile> {
       ),
     );
   }
+}
+
+Widget foodTile(String name, String photo, String price) {
+  return Container(
+    margin: EdgeInsets.zero,
+    decoration: BoxDecoration(border: Border.all(color: Colors.black)),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Center(
+          child: Image.asset(
+            photo,
+            height: 150,
+            width: 150,
+          ),
+        ),
+        Text(
+          name,
+          style: Appwidget.pissaname(),
+        ),
+        Text(
+          price,
+          style: Appwidget.pizzaname(),
+        ),
+        SizedBox(
+          height: 22,
+        ),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            Container(
+                height: 40,
+                width: 60,
+                margin: EdgeInsets.only(right: 0),
+                decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 54, 244, 155),
+                    borderRadius: BorderRadius.circular(5)),
+                child: Icon(
+                  Icons.arrow_forward,
+                  color: Colors.white,
+                )),
+          ],
+        )
+      ],
+    ),
+  );
 }
