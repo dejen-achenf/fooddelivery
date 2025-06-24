@@ -38,8 +38,7 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-    dependencies:
-  curved_navigation_bar: ^1.0.6
+  curved_navigation_bar:
 
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
