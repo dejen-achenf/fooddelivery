@@ -1,13 +1,18 @@
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:thefixed/pages/home.dart';
 
-class Login extends StatefulWidget {
-  const Login({super.key});
+class Signup extends StatefulWidget {
+  const Signup({super.key});
 
   @override
-  State<Login> createState() => _LoginState();
+  State<Signup> createState() => _SignupState();
 }
 
-class _LoginState extends State<Login> {
+class _SignupState extends State<Signup> {
+  TextEditingController namecontroller = new TextEditingController();
+  TextEditingController emailcontroller = new TextEditingController();
+  TextEditingController passwordcontroller = new TextEditingController();
   @override
   Widget build(BuildContext context) {
     final screenHeight = MediaQuery.of(context).size.height;
@@ -20,7 +25,6 @@ class _LoginState extends State<Login> {
             Column(
               children: [
                 Container(
-                  margin: EdgeInsets.only(right: 0, left: 0),
                   height: screenHeight / 2,
                   color: const Color.fromARGB(255, 128, 97, 6),
                   child: Column(
@@ -32,7 +36,7 @@ class _LoginState extends State<Login> {
                         child: Image.asset(
                           "assets/images/pizza2.png",
                           height: 220,
-                          width: double.infinity,
+                          width: 250,
                           fit: BoxFit.cover,
                         ),
                       ),
@@ -77,12 +81,32 @@ class _LoginState extends State<Login> {
                   children: [
                     Center(
                       child: Text(
-                        "Login",
+                        "Sign Up",
                         style: TextStyle(
                             fontSize: 22, fontWeight: FontWeight.bold),
                       ),
                     ),
                     SizedBox(height: 30),
+
+                    Text("Name", style: TextStyle(fontWeight: FontWeight.bold)),
+                    SizedBox(height: 8),
+
+                    // Use TextField directly with decoration
+                    TextField(
+                      controller: namecontroller,
+                      decoration: InputDecoration(
+                        hintText: "Enter Name",
+                        prefixIcon: Icon(Icons.person),
+                        filled: true,
+                        fillColor: const Color.fromARGB(255, 175, 174, 172)
+                            .withOpacity(0.3),
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide.none,
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 18),
 
                     Text("Email",
                         style: TextStyle(fontWeight: FontWeight.bold)),
@@ -90,6 +114,7 @@ class _LoginState extends State<Login> {
 
                     // Use TextField directly with decoration
                     TextField(
+                      controller: emailcontroller,
                       decoration: InputDecoration(
                         hintText: "Enter email",
                         prefixIcon: Icon(Icons.email),
@@ -110,6 +135,7 @@ class _LoginState extends State<Login> {
 
                     // Use TextField directly with decoration
                     TextField(
+                      controller: passwordcontroller,
                       decoration: InputDecoration(
                         hintText: "Enter Password",
                         prefixIcon: Icon(
@@ -125,17 +151,7 @@ class _LoginState extends State<Login> {
                         ),
                       ),
                     ),
-                    SizedBox(height: 20),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        TextButton(
-                            onPressed: () {},
-                            child: Text("forget password?",
-                                style: TextStyle(fontSize: 20)))
-                      ],
-                    ),
-                    SizedBox(height: 20),
+                    SizedBox(height: 33),
 
                     Center(
                       child: Container(
@@ -146,9 +162,62 @@ class _LoginState extends State<Login> {
                             borderRadius: BorderRadius.circular(20)),
                         child: Center(
                             child: TextButton(
-                                onPressed: () {},
+                                onPressed: () async {
+                                  final name = namecontroller.text.trim();
+                                  final email = emailcontroller.text.trim();
+                                  final password =
+                                      passwordcontroller.text.trim();
+                                  if (name.isEmpty ||
+                                      email.isEmpty ||
+                                      password.isEmpty) {
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text("Please fill all fields"),
+                                      backgroundColor: Colors.red,
+                                    ));
+                                    return;
+                                  }
+
+                                  try {
+                                    UserCredential userCredential =
+                                        await FirebaseAuth.instance
+                                            .createUserWithEmailAndPassword(
+                                                email: email,
+                                                password: password);
+
+                                    // Optionally update display name
+                                    await userCredential.user!
+                                        .updateDisplayName(name);
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text("Sign Up Successful!"),
+                                      backgroundColor: Colors.green,
+                                    ));
+                                    Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                            builder: (context) => Home()));
+                                    // Navigate to next screen if needed
+                                  } on FirebaseAuthException catch (e) {
+                                    String error = "An error occurred";
+                                    if (e.code == 'email-already-in-use') {
+                                      error = "Email already in use";
+                                    } else if (e.code == 'invalid-email') {
+                                      error = "Invalid email";
+                                    } else if (e.code == 'weak-password') {
+                                      error = "Weak password";
+                                    }
+
+                                    ScaffoldMessenger.of(context)
+                                        .showSnackBar(SnackBar(
+                                      content: Text(error),
+                                      backgroundColor: Colors.red,
+                                    ));
+                                  }
+                                },
                                 child: Text(
-                                  "Login",
+                                  "Sign Up",
                                   style: TextStyle(
                                       fontSize: 22,
                                       fontWeight: FontWeight.bold),
@@ -161,13 +230,13 @@ class _LoginState extends State<Login> {
                     Row(
                       children: [
                         Text(
-                          "Don't  have an account? ",
+                          "Already have an account? ",
                           style: TextStyle(fontSize: 20),
                         ),
                         TextButton(
                             onPressed: () {},
                             child: Text(
-                              "Sign up",
+                              "Login",
                               style: TextStyle(
                                   fontSize: 20, fontWeight: FontWeight.bold),
                             ))
